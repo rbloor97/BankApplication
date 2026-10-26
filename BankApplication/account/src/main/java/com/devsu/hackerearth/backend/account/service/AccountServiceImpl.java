@@ -13,36 +13,34 @@ import com.devsu.hackerearth.backend.account.repository.AccountRepository;
 @Service
 public class AccountServiceImpl implements AccountService {
 
-	private final AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
-	public AccountServiceImpl(AccountRepository accountRepository) {
-		this.accountRepository = accountRepository;
-	}
+    public AccountServiceImpl(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     @Override
     public List<AccountDto> getAll() {
         return accountRepository.findAll().stream().map(account -> new AccountDto(
-            account.getId(), 
-            account.getNumber(),
-            account.getType(), 
-            account.getInitialAmount(), 
-            account.isActive(), 
-            account.getClientId()
-        )).collect(Collectors.toList());
+                account.getId(),
+                account.getNumber(),
+                account.getType(),
+                account.getInitialAmount(),
+                account.isActive(),
+                account.getClientId())).collect(Collectors.toList());
     }
 
     @Override
     public AccountDto getById(Long id) {
-        @SuppressWarnings("null")
-        Account account = accountRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Account not found"));
-		return new AccountDto(
+        
+        Account account = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("Account not found"));
+        return new AccountDto(
                 account.getId(),
                 account.getNumber(),
-                account.getType(), 
-                account.getInitialAmount(), 
-                account.isActive(), 
-                account.getClientId()
-        );
+                account.getType(),
+                account.getInitialAmount(),
+                account.isActive(),
+                account.getClientId());
     }
 
     @Override
@@ -54,44 +52,42 @@ public class AccountServiceImpl implements AccountService {
         account.setActive(accountDto.isActive());
         account.setClientId(accountDto.getClientId());
         Account saved = accountRepository.save(account);
-		return new AccountDto(
-            saved.getId(),
-            saved.getNumber(),
-            saved.getType(), 
-            saved.getInitialAmount(), 
-            saved.isActive(), 
-            saved.getClientId()
-        );
+        return new AccountDto(
+                saved.getId(),
+                saved.getNumber(),
+                saved.getType(),
+                saved.getInitialAmount(),
+                saved.isActive(),
+                saved.getClientId());
     }
 
     @Override
     public AccountDto update(AccountDto accountDto) {
         @SuppressWarnings("null")
-        Account account = accountRepository.findById(accountDto.getId()).orElseThrow(() -> new IllegalArgumentException("Account not found"));
-		account.setNumber(accountDto.getNumber());
+        Account account = accountRepository.findById(accountDto.getId())
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        account.setNumber(accountDto.getNumber());
         account.setType(accountDto.getType());
         account.setInitialAmount(accountDto.getInitialAmount());
         account.setActive(accountDto.isActive());
         account.setClientId(accountDto.getClientId());
         Account update = accountRepository.save(account);
-		return new AccountDto(
-            update.getId(),
-            update.getNumber(),
-            update.getType(), 
-            update.getInitialAmount(), 
-            update.isActive(), 
-            update.getClientId()
-        );
+        return new AccountDto(
+                update.getId(),
+                update.getNumber(),
+                update.getType(),
+                update.getInitialAmount(),
+                update.isActive(),
+                update.getClientId());
     }
 
     @Override
     public AccountDto partialUpdate(Long id, PartialAccountDto partialAccountDto) {
-        @SuppressWarnings("null")
-        Account account = accountRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Account not found"));
+        
+        Account account = accountRepository.findById(id).orElseThrow(() -> new RuntimeException("Account not found"));
 		if(partialAccountDto != null){
             account.setActive(partialAccountDto.isActive());
         }
-        @SuppressWarnings("null")
         Account updated = accountRepository.save(account);
 		return new AccountDto(
             updated.getId(),
@@ -106,7 +102,10 @@ public class AccountServiceImpl implements AccountService {
     @SuppressWarnings("null")
     @Override
     public void deleteById(Long id) {
+        if(!accountRepository.existsById(id)){
+            throw new RuntimeException("Account not found");
+        }
         accountRepository.deleteById(id);
     }
-    
+
 }

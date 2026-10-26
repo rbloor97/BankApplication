@@ -37,7 +37,16 @@ public class ClientController {
 	@SuppressWarnings("null")
 	@GetMapping("/{id}")
 	public ResponseEntity<ClientDto> get(@PathVariable Long id) {
-		return ResponseEntity.ok(clientService.getById(id));
+		try{
+			ClientDto client = clientService.getById(id);
+			if(client != null){
+				return ResponseEntity.ok(client);
+			}else{
+				return ResponseEntity.notFound().build();
+			}
+		}catch(Exception e){
+			return ResponseEntity.notFound().build(); 
+		}
 	}
 
 	@SuppressWarnings("null")
@@ -46,23 +55,50 @@ public class ClientController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(clientService.create(clientDto));
 	}
 
-	@SuppressWarnings("null")
-	@PutMapping
+	@PutMapping("/{id}")
 	public ResponseEntity<ClientDto> update(@PathVariable Long id,
 			@RequestBody ClientDto clientDto) {
-		return ResponseEntity.ok(clientService.update(clientDto));
+		try{
+			
+			clientDto.setId(id);
+			ClientDto client = clientService.update(clientDto);
+			if(client != null){
+				return ResponseEntity.ok(client);
+			}else{
+				return ResponseEntity.notFound().build();
+			}
+		}catch(Exception e){
+			return ResponseEntity.notFound().build(); 
+		}
 	}
 
-	@SuppressWarnings("null")
 	@PatchMapping("/{id}")
 	public ResponseEntity<ClientDto> partialUpdate(@PathVariable Long id,
 			@RequestBody PartialClientDto partialClientDto) {
-		return ResponseEntity.ok(clientService.partialUpdate(id, partialClientDto));
+		try{
+			ClientDto client = clientService.partialUpdate(id,partialClientDto);
+			if(client != null){
+				return ResponseEntity.ok(client);
+			}else{
+				return ResponseEntity.notFound().build();
+			}
+		}catch(Exception e){
+			return ResponseEntity.notFound().build(); 
+		}
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		clientService.deleteById(id);
-		return ResponseEntity.ok().build();
+		try{
+			if(id != null){
+				clientService.deleteById(id);
+				return ResponseEntity.noContent().build();
+			}else{
+				return ResponseEntity.notFound().build(); 
+			}
+			
+		}catch(Exception e){
+			return ResponseEntity.notFound().build(); 
+		}
 	}
 }

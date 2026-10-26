@@ -38,7 +38,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionDto getById(Long id) {
         @SuppressWarnings("null")
-        Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
+        Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new RuntimeException("Transaction not found"));
 		return new TransactionDto(
             transaction.getId(),
             transaction.getDate(), 

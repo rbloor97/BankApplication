@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,13 +37,22 @@ public class TransactionController {
 	@SuppressWarnings("null")
 	@GetMapping("/{id}")
     public ResponseEntity<TransactionDto> get(@PathVariable Long id){
-		return ResponseEntity.ok(transactionService.getById(id));
+		try{
+			TransactionDto trx = transactionService.getById(id);
+			if(trx != null){
+				return ResponseEntity.ok(trx);
+			}else{
+				return ResponseEntity.notFound().build();
+			}
+		}catch(Exception e){
+			return ResponseEntity.notFound().build(); 
+		}
 	}
 
 	@SuppressWarnings("null")
 	@PostMapping
 	public ResponseEntity<TransactionDto> create(@RequestBody TransactionDto transactionDto){
-		return ResponseEntity.ok(transactionService.create(transactionDto));
+		return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.create(transactionDto));
 	}
 
 	@SuppressWarnings("null")

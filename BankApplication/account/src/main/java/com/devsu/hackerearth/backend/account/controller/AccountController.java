@@ -2,6 +2,7 @@ package com.devsu.hackerearth.backend.account.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,31 +37,72 @@ public class AccountController {
 	@SuppressWarnings("null")
 	@GetMapping("/{id}")
 	public ResponseEntity<AccountDto> get(@PathVariable Long id) {
-		return ResponseEntity.ok(accountService.getById(id));
+		try{
+			AccountDto account = accountService.getById(id);
+			if(account != null){
+				return ResponseEntity.ok(account);
+			}else{
+				return ResponseEntity.notFound().build();
+			}
+			
+		}catch(Exception e){
+			return ResponseEntity.notFound().build(); 
+		}
 	}
 
 	@SuppressWarnings("null")
 	@PostMapping
 	public ResponseEntity<AccountDto> create(@RequestBody AccountDto accountDto) {
-		return ResponseEntity.ok(accountService.create(accountDto));
+		return ResponseEntity.status(HttpStatus.CREATED).body(accountService.create(accountDto));
 	}
 
 	@SuppressWarnings("null")
-	@PutMapping
+	@PutMapping("/{id}")
 	public ResponseEntity<AccountDto> update(@PathVariable Long id, @RequestBody AccountDto accountDto) {
-		return ResponseEntity.ok(accountService.update(accountDto));
+		try{
+			accountDto.setId(id);
+			AccountDto account = accountService.update(accountDto);
+			if(account != null){
+				return ResponseEntity.ok(account);
+			}else{
+				return ResponseEntity.notFound().build();
+			}
+		}catch(Exception e){
+			return ResponseEntity.notFound().build(); 
+		}
 	}
 
 	@SuppressWarnings("null")
 	@PatchMapping("/{id}")
 	public ResponseEntity<AccountDto> partialUpdate(@PathVariable Long id,
 			@RequestBody PartialAccountDto partialAccountDto) {
-		return ResponseEntity.ok(accountService.partialUpdate(id, partialAccountDto));
+		try{
+
+			AccountDto account = accountService.partialUpdate(id, partialAccountDto);
+			if(account != null){
+				return ResponseEntity.ok(account);
+			}else{
+				return ResponseEntity.notFound().build();
+			}
+			
+		}catch(Exception e){
+			return ResponseEntity.notFound().build(); 
+		}
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		accountService.deleteById(id);
-		return ResponseEntity.ok().build();
+		try{
+			if(id != null){
+				accountService.deleteById(id);
+				return ResponseEntity.noContent().build();
+			}else{
+				return ResponseEntity.notFound().build(); 
+			}
+			
+		}catch(Exception e){
+			return ResponseEntity.notFound().build(); 
+		}
+		
 	}
 }

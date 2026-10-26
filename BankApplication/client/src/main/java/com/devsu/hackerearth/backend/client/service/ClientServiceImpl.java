@@ -37,7 +37,7 @@ public class ClientServiceImpl implements ClientService {
 	public ClientDto getById(Long id) {
 		@SuppressWarnings("null")
 		Client client = clientRepository.findById(id)
-				.orElseThrow(() -> new IllegalArgumentException("Client not found"));
+				.orElseThrow(() -> new RuntimeException("Client not found"));
 		return new ClientDto(
 				client.getId(),
 				client.getDni(),
@@ -79,7 +79,7 @@ public class ClientServiceImpl implements ClientService {
 	public ClientDto update(ClientDto clientDto) {
 		@SuppressWarnings("null")
 		Client client = clientRepository.findById(clientDto.getId())
-				.orElseThrow(() -> new IllegalArgumentException("Client not found"));
+				.orElseThrow(() -> new RuntimeException("Client not found"));
 		client.setName(clientDto.getName());
 		client.setGender(clientDto.getGender());
 		client.setAge(clientDto.getAge());
@@ -106,7 +106,7 @@ public class ClientServiceImpl implements ClientService {
 	@Override
 	public ClientDto partialUpdate(Long id, PartialClientDto partialClientDto) {
 		Client client = clientRepository.findById(id)
-				.orElseThrow(() -> new IllegalArgumentException("Client not found"));
+				.orElseThrow(() -> new RuntimeException("Client not found"));
 		if (partialClientDto != null) {
 			client.setActive(partialClientDto.isActive());
 		}
